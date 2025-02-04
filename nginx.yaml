@@ -1,0 +1,26 @@
+# This playbook installs and configures Nginx on web hosts.
+- name: Install and configure Nginx
+  hosts: web
+  become: yes
+
+  # Define variables for package and service names for better maintainability.
+  vars:
+    nginx_package: nginx
+    nginx_service: nginx
+
+  tasks:
+    - name: Install Nginx
+      ansible.builtin.dnf:
+        name: "{{ nginx_package }}"
+        state: present
+      # Notify the handler to restart the service if the package is installed or updated.
+      notify:
+        - Restart Nginx
+
+  handlers:
+    # Define a handler to restart the Nginx service.
+    - name: Restart Nginx
+      ansible.builtin.service:
+        name: "{{ nginx_service }}"
+        state: restarted
+        enabled: yes
